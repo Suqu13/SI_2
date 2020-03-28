@@ -1,3 +1,5 @@
+import models.Variable
+
 class ConstraintResolver {
 
     fun resolve(variable: Variable, variables: Set<Variable>): Boolean {
