@@ -1,4 +1,4 @@
-package heuristics.value
+package logic.heuristics.value
 
 
 interface ValueHeuristic {

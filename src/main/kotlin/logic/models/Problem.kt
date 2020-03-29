@@ -1,4 +1,4 @@
-package models
+package logic.models
 
 data class Problem(val id: Int, val difficulty: Float, val matrix: Array<IntArray>) {
     override fun equals(other: Any?): Boolean {

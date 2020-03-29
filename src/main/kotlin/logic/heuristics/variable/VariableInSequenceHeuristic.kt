@@ -1,4 +1,4 @@
-package heuristics.variable
+package logic.heuristics.variable
 
 class VariableInSequenceHeuristic : VariableHeuristic {
     override fun findVariable(matrix: Array<IntArray>, row: Int, column: Int): Pair<Int, Int> {

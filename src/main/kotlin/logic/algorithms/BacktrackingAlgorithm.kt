@@ -1,10 +1,10 @@
-package algorithms
+package logic.algorithms
 
-import heuristics.value.ValueHeuristic
-import heuristics.variable.VariableHeuristic
-import models.Problem
-import models.Result
-import utils.ConstraintsChecker
+import logic.heuristics.value.ValueHeuristic
+import logic.heuristics.variable.VariableHeuristic
+import logic.models.Problem
+import logic.models.Result
+import logic.utils.ConstraintsChecker
 import kotlin.collections.ArrayList
 
 class BacktrackingAlgorithm(
@@ -30,6 +30,7 @@ class BacktrackingAlgorithm(
         initialRow: Int,
         initialColumn: Int
     ): ArrayList<Array<IntArray>> {
+        result.incrementTotalNodesNumber()
         val (row, column) = variableHeuristic.findVariable(matrix, initialRow, initialColumn)
 
         if (row <= 8) {
@@ -41,7 +42,7 @@ class BacktrackingAlgorithm(
                     matrix[row][column] = value
                     solve(solutions, matrix.map { it.clone() }.toTypedArray(), row, column)
                     matrix[row][column] = -1
-                    result.incrementTotalNodesNumber()
+                    result.incrementReturnsNumber()
                 }
             }
             return solutions

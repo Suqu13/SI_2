@@ -1,10 +1,9 @@
-package utils
+package logic.utils
 
-import com.github.doyaaaaaken.kotlincsv.dsl.context.WriteQuoteMode
-import models.Problem
+import logic.models.Problem
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
-import models.Result
+import logic.models.Result
 
 class FileIO {
 

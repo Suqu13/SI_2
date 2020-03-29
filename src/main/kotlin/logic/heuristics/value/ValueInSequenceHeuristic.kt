@@ -1,4 +1,4 @@
-package heuristics.value
+package logic.heuristics.value
 
 class ValueInSequenceHeuristic : ValueHeuristic {
     override fun findValue(values: MutableList<Int>): Pair<Int, MutableList<Int>> {
