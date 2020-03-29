@@ -1,22 +1,20 @@
 import algorithms.BacktrackingAlgorithm
 import heuristics.value.ValueInSequenceHeuristic
-import heuristics.variable.VariableWithSmallestDomainHeuristic
+import heuristics.variable.VariableInSequenceHeuristic
+import utils.ConstraintsChecker
 import utils.FileLoader
 
-fun main(args: Array<String>) {
+fun main() {
     val fileLoader = FileLoader()
-    val problems = fileLoader.load().take(5)
-    val constraintResolver = ConstraintResolver()
+    val problems = fileLoader.load()
+    val constraintsChecker = ConstraintsChecker()
     val backtrackingAlgorithm = BacktrackingAlgorithm(
-        constraintResolver = constraintResolver,
-        variableHeuristic = VariableWithSmallestDomainHeuristic(),
+        constraintsChecker = constraintsChecker,
+        variableHeuristic = VariableInSequenceHeuristic(),
         valueHeuristic = ValueInSequenceHeuristic()
     )
     problems.forEach { problem ->
-        val result = backtrackingAlgorithm.run(problem.variables)
-        result.forEach { variable -> print(variable.value) }
-        println("\n")
+        val solutions = backtrackingAlgorithm.run(problem.matrix)
+        solutions.map{ solution -> solution.forEach{ value -> value.forEach { print(it) }}; println("\n") }
     }
-    print(1)
-
 }

@@ -1,8 +1,6 @@
 package heuristics.variable
 
-import models.Variable
-
 interface VariableHeuristic {
-    fun findVariable(variables: Set<Variable>): Variable?
+    fun findVariable(matrix: Array<IntArray>, row: Int, column: Int): Pair<Int, Int>
 
 }

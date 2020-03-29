@@ -1,53 +1,43 @@
 package algorithms
 
-import ConstraintResolver
-import models.Variable
 import heuristics.value.ValueHeuristic
 import heuristics.variable.VariableHeuristic
+import utils.ConstraintsChecker
 
 class BacktrackingAlgorithm(
-    private val constraintResolver: ConstraintResolver,
+    private val valueHeuristic: ValueHeuristic,
     private val variableHeuristic: VariableHeuristic,
-    private val valueHeuristic: ValueHeuristic
+    private val constraintsChecker: ConstraintsChecker
 ) {
-    fun run(variables: Set<Variable>): Set<Variable> = backtracking(variables)
 
-    private fun backtracking(variables: Set<Variable>): Set<Variable> {
-        val variable = variableHeuristic.findVariable(variables)
-        var resultVariables = variables.map { v ->
-            Variable(
-                column = v.column,
-                row = v.row,
-                value = v.value,
-                domain = v.domain
-            )
-        }.toSet()
-
-        if (variable == null) {
-            return resultVariables
-        }
-
-        if (variable.domain.isNotEmpty()) {
-            val domain = variable.domain
-//            valueHeuristic.findValue(variable)
-            domain.forEach { d ->
-                variable.value = d
-                if (constraintResolver.resolve(variable, variables)) {
-                    resultVariables = backtracking(variables.map { v ->
-                        Variable(
-                            column = v.column,
-                            row = v.row,
-                            value = v.value,
-                            domain = v.domain
-                        )
-                    }.toSet())
-                    return resultVariables
-                }
-                variable.value = -1
-            }
-        }
-        return resultVariables
-
+    fun run(matrix: Array<IntArray>): ArrayList<Array<IntArray>> {
+        return solve(ArrayList(), matrix, 0, 0)
     }
 
+    private fun solve(
+        solutions: ArrayList<Array<IntArray>>,
+        matrix: Array<IntArray>,
+        initialRow: Int,
+        initialColumn: Int
+    ): ArrayList<Array<IntArray>> {
+        val (row, column) = variableHeuristic.findVariable(matrix, initialRow, initialColumn)
+
+
+        if (row <= 8) {
+            var domain = (1..9).map { it }.toIntArray()
+            while (domain.isNotEmpty()) {
+                val (value, updatedDomain) = valueHeuristic.findValue(domain)
+                domain = updatedDomain
+                if (constraintsChecker.check(value, row, column, matrix)) {
+                    matrix[row][column] = value
+                    solve(solutions, matrix.map { it.clone() }.toTypedArray(), row, column)
+                    matrix[row][column] = -1
+                }
+            }
+            return solutions
+        }
+        solutions.add(matrix)
+        return solutions
+
+    }
 }
