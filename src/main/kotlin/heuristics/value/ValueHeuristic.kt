@@ -2,5 +2,5 @@ package heuristics.value
 
 
 interface ValueHeuristic {
-    fun findValue(values: IntArray): Pair<Int, IntArray>
+    fun findValue(values: MutableList<Int>): Pair<Int, MutableList<Int>>
 }

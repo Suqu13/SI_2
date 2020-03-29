@@ -1,8 +1,9 @@
 package heuristics.value
 
 class ValueInSequenceHeuristic : ValueHeuristic {
-    override fun findValue(values: IntArray): Pair<Int, IntArray> {
+    override fun findValue(values: MutableList<Int>): Pair<Int, MutableList<Int>> {
         val first = values.first()
-        return Pair(first, values.dropWhile { it == first }.toIntArray())
+        values.removeAt(0)
+        return Pair(first, values)
     }
 }

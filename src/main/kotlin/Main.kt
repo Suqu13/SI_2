@@ -2,19 +2,20 @@ import algorithms.BacktrackingAlgorithm
 import heuristics.value.ValueInSequenceHeuristic
 import heuristics.variable.VariableInSequenceHeuristic
 import utils.ConstraintsChecker
-import utils.FileLoader
+import utils.FileIO
 
 fun main() {
-    val fileLoader = FileLoader()
-    val problems = fileLoader.load()
+    val fileIO = FileIO()
+    val problems = fileIO.load("src/main/resources/Sudoku.csv")
     val constraintsChecker = ConstraintsChecker()
     val backtrackingAlgorithm = BacktrackingAlgorithm(
         constraintsChecker = constraintsChecker,
         variableHeuristic = VariableInSequenceHeuristic(),
         valueHeuristic = ValueInSequenceHeuristic()
     )
-    problems.forEach { problem ->
-        val solutions = backtrackingAlgorithm.run(problem.matrix)
-        solutions.map{ solution -> solution.forEach{ value -> value.forEach { print(it) }}; println("\n") }
+    val results = problems.map { problem ->
+        backtrackingAlgorithm.run(problem)
     }
+
+    fileIO.write("src/main/resources/results.csv", results)
 }

@@ -1,13 +1,22 @@
 package utils
 
+import com.github.doyaaaaaken.kotlincsv.dsl.context.WriteQuoteMode
 import models.Problem
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
+import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
+import models.Result
 
-class FileLoader {
+class FileIO {
 
-    fun load(): Set<Problem> {
-        val problems = mutableSetOf<Problem>()
-        csvReader().open("src/main/resources/Sudoku.csv") {
+    val writer = csvWriter {
+        delimiter = '\n'
+        lineTerminator = "\n\n"
+
+    }
+
+    fun load(fileName: String): List<Problem> {
+        val problems = ArrayList<Problem>()
+        csvReader().open(fileName) {
             readAllAsSequence().forEachIndexed { index, row ->
                 if (index != 0) {
                     val problemAsString = row.joinToString().split(";")
@@ -31,4 +40,14 @@ class FileLoader {
         return matrix
     }
 
+
+    fun write(fileName: String, results: List<Result>) {
+        writer.open(fileName) {
+            results.forEach {
+                writeRow(
+                    it.prepareResultToWriting()
+                )
+            }
+        }
+    }
 }
