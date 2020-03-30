@@ -1,58 +1,59 @@
 package gui
 
-import Runner
-import javafx.beans.property.SimpleSetProperty
+import javafx.beans.property.SimpleIntegerProperty
+import javafx.beans.property.SimpleListProperty
 import javafx.beans.property.SimpleStringProperty
+import javafx.collections.ObservableList
 import logic.models.Result
-import logic.models.Stats
 import logic.utils.FileIO
 import tornadofx.*
 
 
 class PageController(): Controller() {
     private val fileIO = FileIO()
-    private val runner = Runner()
-    private val problems = fileIO.load("src/main/resources/Sudoku.csv")
-    val problemsIds = problems.map { it.id }.asObservable()
-    var matrix = (0..8).map { IntArray(9) { 0 } } .asObservable()
-    val statsProperty = SimpleStringProperty(this, "Stats property","NOT COMPUTED YET")
-
-    val algorithms = listOf("Backtracking").asObservable()
-    val variableHeuristics = listOf("In Sequence").asObservable()
-    val valueHeuristics = listOf("In Sequence").asObservable()
-    var pointer = 0
+    private val runner = ExecutionRunner()
+    var initialMatrix = (0..8).map { IntArray(9) { 0 }}.toTypedArray()
+    var matrix: ObservableList<IntArray> = (0..8).map { IntArray(9) { 0 }}.asObservable()
     private lateinit var result: Result
 
-    fun resolveProblem(problemId: Int, valueHeuristicsName: String, variableHeuristicsName: String, algorithmName: String) {
-        result = runner.execute(problems.first { it.id == problemId }, valueHeuristicsName, variableHeuristicsName, algorithmName)
-        matrix.setAll(result.solutions.first().toList())
-        pointer = 0
-        statsProperty.set(result.prepareResultToWriting().take(9).joinToString(separator = "\n"))
+    fun resolveProblem(pageContext: PageContext, problemId: Int, valueHeuristicsName: String, variableHeuristicsName: String, algorithmName: String) {
+        val problem = pageContext.problems.first { it.id == problemId }
+        result = runner.execute(problem, valueHeuristicsName, variableHeuristicsName, algorithmName)
+        initialMatrix = problem.matrix
+        matrix.setAll(result.solutions.first().toList().toList())
+        pageContext.pointerProperty.set(0)
+        pageContext.statsProperty.set(result.prepareResultToWriting().take(9).joinToString(separator = "\n"))
+        fileIO.write("src/main/resources/${problemId}_id_problem_solutions.csv", listOf(result))
     }
 
-    fun next() {
-        print("next")
-        if (matrix.isNotEmpty() && pointer < matrix.size){
-            pointer += pointer
-            matrix.setAll(result.solutions[pointer].toList())
+    fun next(pageContext: PageContext) {
+        val pointer = pageContext.pointerProperty.get()
+        if (::result.isInitialized && result.solutions.isNotEmpty() && pointer < result.solutions.size - 1 ){
+            pageContext.pointerProperty.set(pointer + 1)
+            matrix.setAll(result.solutions[pageContext.pointerProperty.get()].toList())
         }
     }
 
-    fun previous() {
-        print("previous")
-        if (matrix.isNotEmpty() && pointer > 0) {
-            pointer -= pointer
-            matrix.setAll(result.solutions[pointer].toList())
+    fun previous(pageContext: PageContext) {
+        val pointer = pageContext.pointerProperty.get()
+        if (::result.isInitialized && result.solutions.isNotEmpty() && pointer > 0 ) {
+            pageContext.pointerProperty.set(pointer - 1)
+            matrix.setAll(result.solutions[pageContext.pointerProperty.get()].toList())
         }
     }
 
 }
 
+class PageContext {
 
-class PageContext() {
-    val statsProperty = SimpleSetProperty(this, Stats.SOLUTIONS_NUMBER.kind, observableSetOf("NOT COMPUTED YET"))
+    private val fileIO = FileIO()
+    val problems = fileIO.load("src/main/resources/Sudoku.csv")
+    val problemsIdsProperty =  SimpleListProperty(problems.map { it.id }.asObservable())
+    val pointerProperty = SimpleIntegerProperty(0)
+    val statsProperty = SimpleStringProperty(this, "Stats property","NOT COMPUTED YET")
+    val algorithmsProperty = SimpleListProperty(listOf("Backtracking").asObservable())
+    val variableHeuristicsProperty = SimpleListProperty(listOf("In Sequence").asObservable())
+    val valueHeuristicsProperty = SimpleListProperty(listOf("In Sequence").asObservable())
 }
-
-
 
 

@@ -1,3 +1,5 @@
+package gui
+
 import logic.algorithms.BacktrackingAlgorithm
 import logic.heuristics.value.ValueInSequenceHeuristic
 import logic.heuristics.variable.VariableInSequenceHeuristic
@@ -5,7 +7,7 @@ import logic.models.Problem
 import logic.models.Result
 import logic.utils.ConstraintsChecker
 
-class Runner {
+class ExecutionRunner {
     fun execute(problem: Problem, valueHeuristicsName: String, variableHeuristicsName: String, algorithmName: String): Result {
         val constraintsChecker = ConstraintsChecker()
 

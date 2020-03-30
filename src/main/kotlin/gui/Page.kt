@@ -14,10 +14,8 @@ import tornadofx.*
 
 class Page : View() {
     private val pageController: PageController by inject()
+    private val pageContext = PageContext()
 
-    private val matrix = (0..8).map { IntArray(9) { 0 } }.toTypedArray()
-
-    private var pointer = 0
     private var currentId = -1
     private var currentAlgorithm = ""
     private var currentVariableHeuristic = ""
@@ -26,6 +24,7 @@ class Page : View() {
     private fun onClickEvaluate() {
         if (currentId != -1 && currentAlgorithm != "" && currentValueHeuristic != "" && currentVariableHeuristic != "") {
             pageController.resolveProblem(
+                pageContext,
                 currentId,
                 currentValueHeuristic,
                 currentVariableHeuristic,
@@ -44,25 +43,40 @@ class Page : View() {
                 paddingLeft = 100
             }
 
-            sudokuTableBuilder(matrix)
-            controlButtonsBuilder(next = { pageController.next() }, previous = { pageController.previous() })
+            sudokuTableBuilder(pageController)
+            controlButtonsBuilder(
+                pageContext = pageContext,
+                next = { pageController.next(pageContext) },
+                previous = { pageController.previous(pageContext) })
         }
         center = contextBuilder()
     }
 
-    private fun EventTarget.sudokuTableBuilder(matrix: Array<IntArray>): GridPane = gridpane {
+    private fun EventTarget.sudokuTableBuilder(pageController: PageController): GridPane = gridpane {
         alignment = Pos.CENTER
+        pageController.initialMatrix.map { m ->
+            row {
+                m.map { v ->
+                    button("") {
+                        addClass(Styles.element)
+                        style {
+                            textFill = Color.WHITE
+                        }
+                    }
+                }
+            }
+        }
         pageController.matrix.onChange {
-            pageController.matrix.mapIndexed { i, m ->
+            pageController.matrix.forEachIndexed { i, m ->
                 row {
                     m.forEachIndexed { j, v ->
-                       val cell = button(if (v != -1) v.toString() else "") {
+                        val cell = button(if (v != -1) v.toString() else "") {
                             addClass(Styles.element)
                             style {
-                                textFill = if (v == matrix[i][j]) c("#ffd31d") else Color.WHITE
+                                textFill = if (v == pageController.initialMatrix[i][j]) c("#ffd31d") else Color.WHITE
                             }
                         }
-                        add(cell, i, j )
+                        add(cell, i, j)
                     }
                 }
             }
@@ -116,15 +130,23 @@ class Page : View() {
 
     private fun EventTarget.formBuilder(): Form = form {
         vbox {
-            customComboBoxBuilder("Sudoku ID", pageController.problemsIds) { value -> { currentId = value.toInt() }() }
-            customComboBoxBuilder("Algorithm", pageController.algorithms) { value -> { currentAlgorithm = value }() }
+            customComboBoxBuilder("Sudoku ID", pageContext.problemsIdsProperty) { value ->
+                {
+                    currentId = value.toInt()
+                }()
+            }
+            customComboBoxBuilder("Algorithm", pageContext.algorithmsProperty) { value ->
+                {
+                    currentAlgorithm = value
+                }()
+            }
             customComboBoxBuilder(
                 "Variable heuristics",
-                pageController.variableHeuristics
+                pageContext.variableHeuristicsProperty
             ) { value -> { currentVariableHeuristic = value }() }
             customComboBoxBuilder(
                 "Value heuristics",
-                pageController.valueHeuristics
+                pageContext.valueHeuristicsProperty
             ) { value -> { currentValueHeuristic = value }() }
             customButtonBuilder("Evaluate!") { onClickEvaluate() }
             vboxConstraints {
@@ -156,14 +178,18 @@ class Page : View() {
                     fontSize = 25.px
                 }
             }
-            statsBuilder(pageController.statsProperty)
+            statsBuilder(pageContext.statsProperty)
             vboxConstraints {
                 margin = Insets(20.0, 120.0, 0.0, 120.0)
             }
         }
     }
 
-    private fun EventTarget.controlButtonsBuilder(next: () -> Unit, previous: () -> Unit): VBox {
+    private fun EventTarget.controlButtonsBuilder(
+        pageContext: PageContext,
+        next: () -> Unit,
+        previous: () -> Unit
+    ): VBox {
         return vbox {
             alignment = Pos.CENTER
             hbox {
@@ -184,12 +210,19 @@ class Page : View() {
 
                 }
             }
-            text("Current solution number: ${pageController.pointer}") {
-                fill = Styles.white
-                style {
-                    fontWeight = FontWeight.findByWeight(700)
+            hbox {
+                alignment = Pos.CENTER
+                text("Current solution number: ") {
+                    fill = Styles.white
+                }
+                label(pageContext.pointerProperty + 1) {
+                    style {
+                        textFill = Styles.white
+                        fontWeight = FontWeight.findByWeight(700)
+                    }
                 }
             }
+
         }
     }
 }
