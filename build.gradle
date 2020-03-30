@@ -7,9 +7,12 @@ version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    maven {url 'https://oss.sonatype.org/content/repositories/snapshots'}
 }
 
 dependencies {
+    implementation 'org.controlsfx:controlsfx:9.0.1-SNAPSHOT' // org/controlsfx/controlsfx/9.0.1-SNAPSHOT/
+
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     implementation("com.github.doyaaaaaken:kotlin-csv-jvm:0.7.3")
     implementation("no.tornado:tornadofx:1.7.20")

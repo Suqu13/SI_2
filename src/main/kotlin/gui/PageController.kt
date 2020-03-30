@@ -1,48 +1,58 @@
 package gui
 
 import Runner
-import javafx.beans.property.SimpleIntegerProperty
-import javafx.beans.property.SimpleLongProperty
+import javafx.beans.property.SimpleSetProperty
+import javafx.beans.property.SimpleStringProperty
+import logic.models.Result
 import logic.models.Stats
 import logic.utils.FileIO
-import tornadofx.Controller
-import tornadofx.ItemViewModel
+import tornadofx.*
 
 
-class PageController: Controller() {
+class PageController(): Controller() {
     private val fileIO = FileIO()
     private val runner = Runner()
     private val problems = fileIO.load("src/main/resources/Sudoku.csv")
+    val problemsIds = problems.map { it.id }.asObservable()
+    var matrix = (0..8).map { IntArray(9) { 0 } } .asObservable()
+    val statsProperty = SimpleStringProperty(this, "Stats property","NOT COMPUTED YET")
 
-    fun getProblemsIds() = problems.map { it.id }
+    val algorithms = listOf("Backtracking").asObservable()
+    val variableHeuristics = listOf("In Sequence").asObservable()
+    val valueHeuristics = listOf("In Sequence").asObservable()
+    var pointer = 0
+    private lateinit var result: Result
+
+    fun resolveProblem(problemId: Int, valueHeuristicsName: String, variableHeuristicsName: String, algorithmName: String) {
+        result = runner.execute(problems.first { it.id == problemId }, valueHeuristicsName, variableHeuristicsName, algorithmName)
+        matrix.setAll(result.solutions.first().toList())
+        pointer = 0
+        statsProperty.set(result.prepareResultToWriting().take(9).joinToString(separator = "\n"))
+    }
+
+    fun next() {
+        print("next")
+        if (matrix.isNotEmpty() && pointer < matrix.size){
+            pointer += pointer
+            matrix.setAll(result.solutions[pointer].toList())
+        }
+    }
+
+    fun previous() {
+        print("previous")
+        if (matrix.isNotEmpty() && pointer > 0) {
+            pointer -= pointer
+            matrix.setAll(result.solutions[pointer].toList())
+        }
+    }
 
 }
 
 
 class PageContext() {
-
-//    val id = SimpleIntegerProperty(this,Stats.PROBLEM_ID.kind, -1)
-
-
-    val problemIdProperty = SimpleIntegerProperty(this,Stats.PROBLEM_ID.kind, -1)
-    val timeToFirstSolutionProperty = SimpleLongProperty(this, Stats.TIME_TO_FIRST_SOLUTION.kind, -1)
-    val nodesNumberToFirstSolutionProperty = SimpleLongProperty(this, Stats.NODES_NUMBER_TO_FIRST_SOLUTION.kind, -1)
-    val returnsNumberToFirstSolutionProperty = SimpleLongProperty(this, Stats.RETURNS_NUMBER_TO_FIRST_SOLUTION.kind, -1)
-    val totalNodesNumberProperty = SimpleLongProperty(this, Stats.TOTAL_RETURNS_NUMBER.kind, -1)
-    val totalReturnsNumberProperty = SimpleLongProperty(this, Stats.TOTAL_RETURNS_NUMBER.kind, -1)
-    val solutionsNumberProperty = SimpleLongProperty(this, Stats.SOLUTIONS_NUMBER.kind, -1)
+    val statsProperty = SimpleSetProperty(this, Stats.SOLUTIONS_NUMBER.kind, observableSetOf("NOT COMPUTED YET"))
 }
 
-class PageContextModel(pageContext: PageContext): ItemViewModel<PageContext>(pageContext) {
-    val id = bind(PageContext::problemIdProperty)
-    val problemId = bind(PageContext::problemIdProperty)
-    val timeToFirstSolution = bind(PageContext::timeToFirstSolutionProperty)
-    val nodesNumberToFirstSolution = bind(PageContext::nodesNumberToFirstSolutionProperty)
-    val returnsNumberToFirstSolution= bind(PageContext::returnsNumberToFirstSolutionProperty)
-    val totalNodesNumber = bind(PageContext::totalNodesNumberProperty)
-    val totalReturnsNumber = bind(PageContext::totalReturnsNumberProperty)
-    val solutionsNumber = bind(PageContext::solutionsNumberProperty)
-}
 
 
 
