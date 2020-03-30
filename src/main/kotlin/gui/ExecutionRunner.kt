@@ -21,11 +21,18 @@ class ExecutionRunner {
             else -> VariableInSequenceHeuristic()
         }
 
-        val algorithm = BacktrackingAlgorithm(
-            constraintsChecker = constraintsChecker,
-            variableHeuristic = variableHeuristics,
-            valueHeuristic = valueHeuristics
-        )
+        val algorithm = when(algorithmName) {
+            "Backtracking" -> BacktrackingAlgorithm(
+                constraintsChecker = constraintsChecker,
+                variableHeuristic = variableHeuristics,
+                valueHeuristic = valueHeuristics
+            )
+            else -> BacktrackingAlgorithm(
+                constraintsChecker = constraintsChecker,
+                variableHeuristic = variableHeuristics,
+                valueHeuristic = valueHeuristics
+            )
+        }
         return algorithm.run(problem)
     }
 }

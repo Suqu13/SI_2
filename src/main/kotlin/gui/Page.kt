@@ -56,7 +56,7 @@ class Page : View() {
         alignment = Pos.CENTER
         pageController.initialMatrix.map { m ->
             row {
-                m.map { v ->
+                m.map { _ ->
                     button("") {
                         addClass(Styles.element)
                         style {
