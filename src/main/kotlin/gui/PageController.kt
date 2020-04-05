@@ -1,15 +1,12 @@
 package gui
 
-import javafx.beans.property.SimpleIntegerProperty
-import javafx.beans.property.SimpleListProperty
-import javafx.beans.property.SimpleStringProperty
 import javafx.collections.ObservableList
 import logic.models.Result
 import logic.utils.FileIO
 import tornadofx.*
 
 
-class PageController(): Controller() {
+class PageController: Controller() {
     private val fileIO = FileIO()
     private val runner = ExecutionRunner()
     var initialMatrix = (0..8).map { IntArray(9) { 0 }}.toTypedArray()
@@ -41,19 +38,8 @@ class PageController(): Controller() {
             matrix.setAll(result.solutions[pageContext.pointerProperty.get()].toList())
         }
     }
-
 }
 
-class PageContext {
 
-    private val fileIO = FileIO()
-    val problems = fileIO.load("src/main/resources/Sudoku.csv")
-    val problemsIdsProperty =  SimpleListProperty(problems.map { it.id }.asObservable())
-    val pointerProperty = SimpleIntegerProperty(0)
-    val statsProperty = SimpleStringProperty(this, "Stats property","NOT COMPUTED YET")
-    val algorithmsProperty = SimpleListProperty(listOf("Backtracking", "ForwardChecking").asObservable())
-    val variableHeuristicsProperty = SimpleListProperty(listOf("In Sequence").asObservable())
-    val valueHeuristicsProperty = SimpleListProperty(listOf("In Sequence").asObservable())
-}
 
 

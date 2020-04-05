@@ -2,8 +2,6 @@ package logic.algorithms
 
 import logic.heuristics.value.ValueHeuristic
 import logic.heuristics.variable.VariableHeuristic
-import logic.models.Problem
-import logic.models.Result
 import logic.utils.ConstraintsChecker
 import kotlin.collections.ArrayList
 
@@ -70,9 +68,13 @@ class ForwardCheckingAlgorithm(
         return variablesInSquareWithoutValue.toTypedArray()
     }
 
-    private fun checkIfVariableDomainExists(row: Int, column: Int, matrix: Array<IntArray>): Boolean =
-        (findDistinctValuesInColumn(column, matrix) + findDistinctValuesInRow(row,  matrix) + findDistinctValuesInSquare(row, column, matrix)).size == 10
-
+    private fun checkIfVariableDomainExists(row: Int, column: Int, matrix: Array<IntArray>): Boolean {
+        val distinctValues = findDistinctValuesInColumn(column, matrix) + findDistinctValuesInRow(
+            row,
+            matrix
+        ) + findDistinctValuesInSquare(row, column, matrix)
+        return distinctValues.isEmpty() || distinctValues.size < 10
+    }
 
     private fun findDistinctValuesInRow(row: Int, matrix: Array<IntArray>) =
         matrix[row].map { it }.toSet()
