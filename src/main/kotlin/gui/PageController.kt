@@ -17,7 +17,12 @@ class PageController: Controller() {
         val problem = pageContext.problems.first { it.id == problemId }
         result = runner.execute(problem, valueHeuristicsName, variableHeuristicsName, algorithmName)
         initialMatrix = problem.matrix
-        matrix.setAll(result.solutions.first().toList().toList())
+        try {
+            matrix.setAll(result.solutions.first().toList().toList())
+
+        } catch (e: Exception){
+            matrix.setAll(initialMatrix.toList())
+        }
         pageContext.pointerProperty.set(0)
         pageContext.statsProperty.set(result.prepareResultToWriting().take(9).joinToString(separator = "\n"))
         fileIO.write("src/main/resources/${problemId}_id_problem_solutions.csv", listOf(result))
