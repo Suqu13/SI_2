@@ -1,6 +1,7 @@
 package gui
 
 import logic.algorithms.BacktrackingAlgorithm
+import logic.algorithms.ForwardCheckingAlgorithm
 import logic.heuristics.value.ValueInSequenceHeuristic
 import logic.heuristics.variable.VariableInSequenceHeuristic
 import logic.models.Problem
@@ -23,6 +24,11 @@ class ExecutionRunner {
 
         val algorithm = when(algorithmName) {
             "Backtracking" -> BacktrackingAlgorithm(
+                constraintsChecker = constraintsChecker,
+                variableHeuristic = variableHeuristics,
+                valueHeuristic = valueHeuristics
+            )
+            "ForwardChecking" -> ForwardCheckingAlgorithm(
                 constraintsChecker = constraintsChecker,
                 variableHeuristic = variableHeuristics,
                 valueHeuristic = valueHeuristics

@@ -51,7 +51,7 @@ class PageContext {
     val problemsIdsProperty =  SimpleListProperty(problems.map { it.id }.asObservable())
     val pointerProperty = SimpleIntegerProperty(0)
     val statsProperty = SimpleStringProperty(this, "Stats property","NOT COMPUTED YET")
-    val algorithmsProperty = SimpleListProperty(listOf("Backtracking").asObservable())
+    val algorithmsProperty = SimpleListProperty(listOf("Backtracking", "ForwardChecking").asObservable())
     val variableHeuristicsProperty = SimpleListProperty(listOf("In Sequence").asObservable())
     val valueHeuristicsProperty = SimpleListProperty(listOf("In Sequence").asObservable())
 }
