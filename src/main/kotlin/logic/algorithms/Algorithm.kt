@@ -49,11 +49,11 @@ abstract class Algorithm(
                     matrix[row][column] = -1
                 }
             }
-            result.incrementReturnsNumber()
             return solutions
         }
         solutions.add(matrix)
         result.watchForSolution(matrix)
+        result.incrementReturnsNumber()
         return solutions
     }
 }

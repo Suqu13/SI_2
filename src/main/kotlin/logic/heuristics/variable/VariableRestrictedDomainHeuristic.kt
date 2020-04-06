@@ -19,10 +19,7 @@ class VariableRestrictedDomainHeuristic : VariableHeuristic {
         return Pair(9, 0)
     }
 
-    private fun findSquareWithTheGreatestValueCoverage(
-        filledValuesPerSquare: List<IntArray>,
-        flattenedFilledValuesPerSquare: MutableList<Int>
-    ): Pair<Int, Int> {
+    private fun findSquareWithTheGreatestValueCoverage(filledValuesPerSquare: List<IntArray>, flattenedFilledValuesPerSquare: MutableList<Int>): Pair<Int, Int> {
         val maxNumberOfFilledFields = flattenedFilledValuesPerSquare.filter { it < 9 }.max() as Int
         var square: Pair<Int, Int> = Pair(0, 0)
         filledValuesPerSquare.forEachIndexed { rowIndex, row ->

@@ -50,11 +50,7 @@ class ForwardCheckingAlgorithm(
     }
 
 
-    private fun findVariablesWithoutValuesInSquare(
-        row: Int,
-        column: Int,
-        matrix: Array<IntArray>
-    ): Array<Pair<Int, Int>> {
+    private fun findVariablesWithoutValuesInSquare(row: Int, column: Int, matrix: Array<IntArray>): Array<Pair<Int, Int>> {
         val variablesInSquareWithoutValue = arrayListOf<Pair<Int, Int>>()
         val x = (row / 3) * 3
         val y = (column / 3) * 3
@@ -76,10 +72,10 @@ class ForwardCheckingAlgorithm(
         return distinctValues.isEmpty() || distinctValues.size < 10
     }
 
-    private fun findDistinctValuesInRow(row: Int, matrix: Array<IntArray>) =
+    private fun findDistinctValuesInRow(row: Int, matrix: Array<IntArray>): Set<Int> =
         matrix[row].map { it }.toSet()
 
-    private fun findDistinctValuesInColumn(column: Int, matrix: Array<IntArray>) =
+    private fun findDistinctValuesInColumn(column: Int, matrix: Array<IntArray>): Set<Int> =
         (0..8).map { matrix[it][column] }.toSet()
 
     private fun findDistinctValuesInSquare(row: Int, column: Int, matrix: Array<IntArray>): Set<Int> {
